@@ -46,7 +46,7 @@ if (isset($_SESSION["name"])) {
         }
 
         input[type=text], input[type=password] {
-            width: 100%;
+            width: 80%;
             padding: 15px;
             margin: 5px 0 15px 0;
             border: 1px solid #ddd;

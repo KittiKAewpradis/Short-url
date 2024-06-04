@@ -1,0 +1,32 @@
+<?php
+$conn = sqlsrv_connect($serverName, $connectionInfo);
+if ($conn) {
+    $sql = "SELECT * FROM links WHERE owner = '{$_SESSION["username"]}'";
+    $stmt = sqlsrv_query($conn, $sql);
+    if ($stmt === false) {
+        echo "Error executing query: " . sqlsrv_errors()[0]['message'];
+    } else {
+        while ($row = sqlsrv_fetch_array($stmt, SQLSRV_FETCH_ASSOC)) {
+            $url = "https://aka.haadthip.com/" . $row["code"];
+            //echo "<br>Your link: " . $row["link"] . "<div style='border: 1px solid #ccc; padding: 10px; margin: 10px 0;'>Short URL:aka.haadthip.com/" . $row["code"] . "</div>";
+            //echo "<br>Your link: ".$row["link"]."<br>Short URL: <div style='display: inline-block; border: 1px solid #ccc; padding: 10px; margin: 10px 0;'>aka.haadthip.com/" . $row["code"] . "</div>";
+            echo "<br>Your link: ". $row["link"]. "<br>Short URL: <div style='display: inline-block; border: 1px solid #ccc; padding: 10px; margin: 10px 0; text-align: left;'>aka.haadthip.com/" . $row["code"] . "</div>";
+            
+            //echo "ลิงค์: <br>" . $row["link"] . "<br><br>ไปที่หน้า: <a href='http://aka.haadthip.com/" . $row["code"] . "'>aka.haadthip.com/" . $row["code"] . "</a><br>";
+            echo "<br><br><img src='https://api.qrserver.com/v1/create-qr-code/?data=" . urlencode($url) . "&size=150x150' alt='QR Code'>";
+            echo "<form action='link_action' method='post'>";
+            echo "<input type='hidden' name='code' value='" . $row["code"] . "'>";
+            echo "<input type='hidden' name='action' value='delete'>";
+            echo "<button class='delete-button' type='submit'>Delete</button>";
+            echo "</form>"; 
+            echo "<br><button class='share' onclick='shareLink(\"$url\")'>Share</button><br>";
+        }
+    }
+    sqlsrv_free_stmt($stmt); 
+} else {
+    echo "Connection could not be established.\n";
+    die(print_r(sqlsrv_errors(), true));
+}
+
+sqlsrv_close($conn);
+?>
